@@ -283,7 +283,7 @@ export function ArticleCarousel() {
           {total > 1 && (
             <div
               ref={stripRef}
-              className="relative mt-4 grid auto-cols-[minmax(230px,1fr)] grid-flow-col gap-3 overflow-x-auto pb-1 [scrollbar-width:none]"
+              className="relative mt-4 grid auto-cols-[minmax(220px,1fr)] grid-flow-col gap-3 overflow-x-auto pb-1 [scrollbar-width:none]"
             >
               {articles.map((article, i) => {
                 const active = i === activeIndex;

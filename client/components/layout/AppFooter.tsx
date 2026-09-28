@@ -25,7 +25,7 @@ export function AppFooter() {
             {FOOTER_MODELS.map(({ key, kind, description }) => (
               <li key={key} className="flex flex-col rounded-2xl border border-border bg-white p-4">
                 <span className="text-[11px] font-medium uppercase tracking-wide text-ink-400">{kind}</span>
-                <code className="mt-1 break-all font-mono text-[12.5px] text-ink">{MODELS[key]}</code>
+                <code className="mt-1 break-words font-mono text-[12.5px] text-ink">{MODELS[key]}</code>
                 <span className="mt-2 text-xs leading-relaxed text-ink-500">{description}</span>
                 <a
                   href={builderModelUrl(MODEL_IDS[key])}

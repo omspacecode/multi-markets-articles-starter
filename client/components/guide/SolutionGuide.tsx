@@ -42,6 +42,12 @@ function LinkList({ links }: { links: { label: string; href: string }[] }) {
   );
 }
 
+function MobileLabel({ children }: { children: string }) {
+  return (
+    <span className="mb-0.5 block text-[11px] font-medium uppercase tracking-wide text-ink-400 md:hidden">{children}</span>
+  );
+}
+
 function NumberedList({ items }: { items: ReactNode[] }) {
   return (
     <ol className="space-y-3">
@@ -78,21 +84,28 @@ function Overview() {
       <p className="mt-3 font-display text-[26px] leading-[1.2] text-ink md:text-[30px]">{OVERVIEW_GOAL}</p>
 
       <Section title="What we heard → what we recommend">
-        <div className="overflow-x-auto rounded-2xl border border-border bg-white">
-          <table className="w-full min-w-[620px] text-left text-[13px]">
-            <thead>
+        <div className="overflow-hidden rounded-2xl border border-border bg-white">
+          <table className="w-full text-left text-[13px] max-md:block">
+            <thead className="max-md:hidden">
               <tr className="bg-sand-100 text-ink-500">
                 <th className="px-4 py-3 font-medium">What we heard</th>
                 <th className="px-4 py-3 font-medium">Recommendation</th>
                 <th className="px-4 py-3 font-medium">In the demo</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="max-md:block">
               {REQUIREMENTS.map((row) => (
-                <tr key={row.heard} className="border-t border-sand-200 align-top">
-                  <td className="px-4 py-3 font-medium text-ink">{row.heard}</td>
-                  <td className="px-4 py-3 leading-relaxed text-ink-600">{row.recommendation}</td>
-                  <td className="px-4 py-3 text-ink-600">
+                <tr
+                  key={row.heard}
+                  className="border-t border-sand-200 align-top max-md:block max-md:py-2 max-md:first:border-t-0"
+                >
+                  <td className="px-4 py-3 font-medium text-ink max-md:block max-md:pb-1.5">{row.heard}</td>
+                  <td className="px-4 py-3 leading-relaxed text-ink-600 max-md:block max-md:py-1.5">
+                    <MobileLabel>Recommendation</MobileLabel>
+                    {row.recommendation}
+                  </td>
+                  <td className="px-4 py-3 text-ink-600 max-md:block max-md:pt-1.5">
+                    <MobileLabel>In the demo</MobileLabel>
                     {row.inDemo}
                     {row.topic && (
                       <button

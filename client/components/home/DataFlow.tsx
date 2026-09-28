@@ -50,10 +50,12 @@ export function DataFlow() {
             <code className="mt-1.5 block break-words font-mono text-[12.5px] text-white">{step.value}</code>
             <p className="mt-1 text-xs text-pine-200">{step.note}</p>
             {i < steps.length - 1 && (
-              <ArrowRightOutlined
+              <span
                 aria-hidden="true"
-                className="absolute -right-[11px] top-1/2 z-10 hidden -translate-y-1/2 rounded-full bg-pine-700 p-[3px] text-[10px] text-coral-300 md:block"
-              />
+                className="absolute -right-[11px] top-1/2 z-10 hidden -translate-y-1/2 rounded-full bg-pine-700 p-[3px] text-[10px] leading-none text-coral-300 md:flex"
+              >
+                <ArrowRightOutlined />
+              </span>
             )}
           </li>
         ))}

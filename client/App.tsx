@@ -1,4 +1,3 @@
-import "./lib/verify-proxy"; // TEMPORARY: remove after verification
 import "./global.css";
 
 import { createRoot } from "react-dom/client";
