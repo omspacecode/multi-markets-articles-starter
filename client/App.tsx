@@ -1,4 +1,3 @@
-import "./dev-proxy";
 import "./global.css";
 
 import { createRoot } from "react-dom/client";

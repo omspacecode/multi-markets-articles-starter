@@ -151,7 +151,6 @@ export function ArticleCarousel({
     added.forEach((a) => seen.add(a.id));
     setFreshIds((ids) => [...ids, ...added.map((a) => a.id)]);
     const first = added[0];
-    console.warn("[verify] carousel picked up new article:", first.title); // TEMP-VERIFY-PROXY
     window.setTimeout(() => carouselRef.current?.goTo(articles.findIndex((a) => a.id === first.id)), 60);
 
     const key = `article-${first.id}`;
