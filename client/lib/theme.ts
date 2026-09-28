@@ -1,0 +1,83 @@
+import type { ThemeConfig } from "antd";
+
+export const relayTheme: ThemeConfig = {
+  token: {
+    colorPrimary: "#0F4C3F",
+    colorInfo: "#0F4C3F",
+    colorSuccess: "#1D715D",
+    colorWarning: "#C58B1A",
+    colorError: "#D8452B",
+    colorLink: "#0F4C3F",
+    colorLinkHover: "#1D715D",
+    colorText: "#16181D",
+    colorTextSecondary: "#5B5E66",
+    colorTextTertiary: "#8A8C93",
+    colorBgLayout: "#F7F4EE",
+    colorBgContainer: "#FFFFFF",
+    colorBorder: "#E3DCCD",
+    colorBorderSecondary: "#EFEAE0",
+    colorFillSecondary: "#EFEAE0",
+    colorFillTertiary: "#F3EFE7",
+    colorFillQuaternary: "#F7F4EE",
+    fontFamily: "Geist, ui-sans-serif, system-ui, sans-serif",
+    fontFamilyCode: "'Geist Mono', ui-monospace, SFMono-Regular, monospace",
+    fontSize: 14,
+    borderRadius: 10,
+    borderRadiusLG: 16,
+    borderRadiusSM: 8,
+    controlHeight: 36,
+    controlHeightLG: 44,
+    wireframe: false,
+    boxShadow:
+      "0 2px 6px rgba(22, 24, 29, 0.05), 0 20px 40px -20px rgba(22, 24, 29, 0.25)",
+    boxShadowSecondary:
+      "0 2px 6px rgba(22, 24, 29, 0.05), 0 20px 40px -20px rgba(22, 24, 29, 0.25)",
+  },
+  components: {
+    Button: {
+      primaryShadow: "none",
+      defaultShadow: "none",
+      dangerShadow: "none",
+      fontWeight: 500,
+      defaultBorderColor: "#E3DCCD",
+    },
+    Tabs: {
+      inkBarColor: "#FF5C39",
+      itemColor: "#5B5E66",
+      itemHoverColor: "#16181D",
+      itemSelectedColor: "#16181D",
+      itemActiveColor: "#16181D",
+      horizontalItemGutter: 28,
+      horizontalItemPadding: "14px 0",
+      horizontalMargin: "0",
+      titleFontSize: 14,
+    },
+    Segmented: {
+      trackBg: "#EFEAE0",
+      itemSelectedBg: "#FFFFFF",
+      itemColor: "#5B5E66",
+      itemHoverColor: "#16181D",
+      itemSelectedColor: "#16181D",
+    },
+    Table: {
+      headerBg: "#F7F4EE",
+      headerColor: "#5B5E66",
+      borderColor: "#EFEAE0",
+      cellPaddingBlock: 12,
+    },
+    Tag: {
+      defaultBg: "#EFEAE0",
+      defaultColor: "#3A3D45",
+    },
+    Tooltip: {
+      colorBgSpotlight: "#16181D",
+    },
+    Breadcrumb: {
+      itemColor: "#8A8C93",
+      lastItemColor: "#3A3D45",
+      linkColor: "#5B5E66",
+      linkHoverColor: "#16181D",
+      separatorColor: "#B7B8BD",
+    },
+  },
+};

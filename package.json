@@ -13,6 +13,10 @@
     "typecheck": "tsc"
   },
   "dependencies": {
+    "@ant-design/icons": "^6.3.4",
+    "@builder.io/sdk-react": "^5.2.14",
+    "antd": "^6.6.5",
+    "dompurify": "^3.4.16",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "zod": "^4.4.3"
