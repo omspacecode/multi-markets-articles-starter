@@ -19,5 +19,15 @@ export function createServer() {
 
   app.get("/api/demo", handleDemo);
 
+  // TEMP-VERIFY-PROXY
+  const proxyTo = (origin: string): express.RequestHandler => async (req, res) => {
+    const upstream = await fetch(`${origin}${req.url}`);
+    res.status(upstream.status);
+    res.type(upstream.headers.get("content-type") ?? "application/octet-stream");
+    res.send(Buffer.from(await upstream.arrayBuffer()));
+  };
+  app.use("/__builder-cdn", proxyTo("https://cdn.builder.io"));
+  app.use("/__pexels", proxyTo("https://images.pexels.com"));
+
   return app;
 }

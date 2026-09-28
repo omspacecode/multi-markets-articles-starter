@@ -32,9 +32,11 @@ export function AppHeader() {
           Builder.io solution demo
         </span>
         <div className="ml-auto flex items-center gap-1.5 sm:gap-2">
-          <Button type="text" icon={<CompassOutlined />} onClick={startTour} className="hidden sm:inline-flex">
-            Tour
-          </Button>
+          <span className="hidden sm:inline-flex">
+            <Button type="text" icon={<CompassOutlined />} onClick={startTour}>
+              Tour
+            </Button>
+          </span>
           <Button icon={<ReadOutlined />} onClick={() => openGuide()} data-tour="guide" aria-label="Open solution guide">
             <span className="hidden sm:inline">Solution guide</span>
           </Button>

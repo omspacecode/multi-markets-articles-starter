@@ -1,7 +1,8 @@
+import "./dev-proxy";
 import "./global.css";
 
 import { createRoot } from "react-dom/client";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryCache, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { App as AntApp, ConfigProvider } from "antd";
 import enGB from "antd/locale/en_GB";
@@ -15,6 +16,11 @@ import CountryHome from "./pages/CountryHome";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
+  queryCache: new QueryCache({
+    onError(error, query) {
+      console.error("[Relay] Query failed", query.queryKey, error);
+    },
+  }),
   defaultOptions: {
     queries: { staleTime: 10_000, refetchOnWindowFocus: false, retry: 1 },
   },
@@ -27,7 +33,7 @@ function HomeRedirect() {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <BrowserRouter>
+    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <ConfigProvider theme={relayTheme} locale={enGB}>
         <AntApp notification={{ placement: "bottomRight" }}>
           <PersonaProvider>

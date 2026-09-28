@@ -281,7 +281,7 @@ const homepage = await fetchOneEntry({
     answer:
       "Don't store slides in the homepage. Place an Article Carousel component whose settings are rules (how many, which category, featured first), and let it query the News article model at runtime for the selected country and target group. Publishing an article is all it takes; nobody edits the homepage.",
     tryIt: [
-      <>In Builder, create a <b>News article</b> with Countries: Denmark (or All countries) and Target groups: Everyone, then publish it. Within about 15 seconds it appears here as the newest slide, with a notification.</>,
+      <>In Builder, create a <b>News article</b> with Countries: Denmark (or All countries) and Target groups: Everyone, then publish it. It appears here as the newest slide, with a notification, usually within a minute: the page checks every 15 seconds, and Builder's CDN can add a short delay. Publishing from another tab? It checks again as soon as you switch back.</>,
       <>Tick <b>Featured</b> on an article to pin it to the first slide.</>,
       <>Admins can change the carousel's rules (count, category, autoplay) in the homepage entry without touching code.</>,
     ],

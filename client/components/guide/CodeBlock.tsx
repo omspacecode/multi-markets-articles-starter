@@ -48,7 +48,7 @@ export function CodeBlock({ code, title }: { code: string; title?: string }) {
           Copy
         </Button>
       </div>
-      <pre className="px-4 py-4 font-mono text-[12.5px] leading-relaxed text-sand-200">
+      <pre className="overflow-x-auto px-4 py-4 font-mono text-[12.5px] leading-relaxed text-sand-200">
         <code>{content}</code>
       </pre>
     </div>

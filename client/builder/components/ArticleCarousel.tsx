@@ -46,8 +46,8 @@ function Slide({ article, country, fresh, eager }: { article: NewsArticle; count
   const href = `/${country}/articles/${article.id}`;
   return (
     <div className="px-px">
-      <article className="grid overflow-hidden rounded-[28px] bg-white shadow-soft ring-1 ring-black/[0.03] md:min-h-[460px] md:grid-cols-[1.3fr_1fr]">
-        <Link to={href} tabIndex={-1} aria-hidden="true" className="group relative block h-60 overflow-hidden sm:h-72 md:h-auto">
+      <article className="grid overflow-hidden rounded-[28px] bg-white shadow-soft ring-1 ring-black/[0.03] lg:min-h-[460px] lg:grid-cols-[1.3fr_1fr]">
+        <Link to={href} tabIndex={-1} aria-hidden="true" className="group relative block h-60 overflow-hidden sm:h-80 lg:h-auto">
           <img
             src={sizedImage(article.heroImage, 1400)}
             alt=""
@@ -107,6 +107,7 @@ export function ArticleCarousel({
   const navigate = useNavigate();
   const { notification } = App.useApp();
   const carouselRef = useRef<CarouselRef>(null);
+  const stripRef = useRef<HTMLDivElement>(null);
   const seenIds = useRef<Set<string> | null>(null);
   const [current, setCurrent] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -150,6 +151,7 @@ export function ArticleCarousel({
     added.forEach((a) => seen.add(a.id));
     setFreshIds((ids) => [...ids, ...added.map((a) => a.id)]);
     const first = added[0];
+    console.warn("[verify] carousel picked up new article:", first.title); // TEMP-VERIFY-PROXY
     window.setTimeout(() => carouselRef.current?.goTo(articles.findIndex((a) => a.id === first.id)), 60);
 
     const key = `article-${first.id}`;
@@ -202,6 +204,19 @@ export function ArticleCarousel({
     return () => window.clearTimeout(id);
   }, [activeIndex, paused, total, autoplayMs, cycle]);
 
+  // Scroll only the strip, never the page, so autoplay can't move a reader who scrolled away.
+  useEffect(() => {
+    const strip = stripRef.current;
+    const item = strip?.children[activeIndex] as HTMLElement | undefined;
+    if (!strip || !item) return;
+    const itemRight = item.offsetLeft + item.offsetWidth;
+    if (item.offsetLeft < strip.scrollLeft) {
+      strip.scrollTo({ left: item.offsetLeft, behavior: "smooth" });
+    } else if (itemRight > strip.scrollLeft + strip.clientWidth) {
+      strip.scrollTo({ left: itemRight - strip.clientWidth, behavior: "smooth" });
+    }
+  }, [activeIndex]);
+
   const countryName = COUNTRIES[country].name;
   const audience = group ? TARGET_GROUP_LABELS[group] : "all target groups";
 
@@ -247,8 +262,8 @@ export function ArticleCarousel({
       </div>
 
       {isLoading ? (
-        <div className="grid overflow-hidden rounded-[28px] bg-white shadow-soft md:min-h-[460px] md:grid-cols-[1.3fr_1fr]">
-          <div className="h-60 animate-pulse bg-sand-200 md:h-auto" />
+        <div className="grid overflow-hidden rounded-[28px] bg-white shadow-soft lg:min-h-[460px] lg:grid-cols-[1.3fr_1fr]">
+          <div className="h-60 animate-pulse bg-sand-200 sm:h-80 lg:h-auto" />
           <div className="p-8 md:p-10">
             <Skeleton active title={{ width: "80%" }} paragraph={{ rows: 5 }} />
           </div>
@@ -300,7 +315,10 @@ export function ArticleCarousel({
           </Carousel>
 
           {total > 1 && (
-            <div className="mt-4 grid auto-cols-[minmax(230px,1fr)] grid-flow-col gap-3 overflow-x-auto pb-1 [scrollbar-width:none]">
+            <div
+              ref={stripRef}
+              className="relative mt-4 grid auto-cols-[minmax(230px,1fr)] grid-flow-col gap-3 overflow-x-auto pb-1 [scrollbar-width:none]"
+            >
               {articles!.map((article, i) => {
                 const active = i === activeIndex;
                 return (

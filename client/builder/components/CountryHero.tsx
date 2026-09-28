@@ -32,10 +32,10 @@ export function CountryHero({ eyebrow, greeting = "Hej", intro, image, imageCapt
         </h1>
         {intro && <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink-500">{intro}</p>}
         {highlights.length > 0 && (
-          <div className="mt-9 flex flex-wrap gap-x-10 gap-y-5">
+          <div className="mt-9 grid grid-cols-3 gap-x-4 gap-y-5 sm:flex sm:flex-wrap sm:gap-x-10">
             {highlights.map((item, i) => (
-              <div key={i} className="min-w-[88px]">
-                <p className="font-display text-[42px] leading-none text-ink">{item.value}</p>
+              <div key={i} className="min-w-0 sm:min-w-[88px]">
+                <p className="font-display text-[36px] leading-none text-ink sm:text-[42px]">{item.value}</p>
                 <p className="mt-1.5 text-sm text-ink-500">{item.label}</p>
               </div>
             ))}
