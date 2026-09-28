@@ -37,14 +37,14 @@ export function ServiceTiles() {
 
   return (
     <section className="py-8 md:py-10">
-      <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
-        <div>
+      <div className="mb-6">
+        <div className="flex flex-wrap items-center gap-3">
           <p className="eyebrow text-ink-500">Services</p>
-          <h2 className="mt-2 font-display text-[34px] leading-none tracking-[-0.01em] text-ink md:text-[42px]">
-            Services for {MARKET_LABELS[activeMarket]}
-          </h2>
+          <SolutionMarker topic="markets" withLabel />
         </div>
-        <SolutionMarker topic="markets" withLabel />
+        <h2 className="mt-3 font-display text-[34px] leading-none tracking-[-0.01em] text-ink md:text-[42px]">
+          Services for {MARKET_LABELS[activeMarket]}
+        </h2>
       </div>
 
       {isLoading ? (

@@ -46,18 +46,16 @@ if (enabled) {
     return new Response(JSON.stringify(json), { status: 200, headers: { "content-type": "application/json" } });
   };
 
-  const rewrite = (img: HTMLImageElement) => {
-    const src = img.getAttribute("src");
-    if (src && shouldProxy(src)) img.setAttribute("src", viaProxy(src));
+  const setAttribute = Element.prototype.setAttribute;
+  Element.prototype.setAttribute = function (name: string, value: string) {
+    const proxied = this instanceof HTMLImageElement && name === "src" && shouldProxy(value) ? viaProxy(value) : value;
+    return setAttribute.call(this, name, proxied);
   };
-
-  new MutationObserver((mutations) => {
-    for (const mutation of mutations) {
-      if (mutation.target instanceof HTMLImageElement) rewrite(mutation.target);
-      mutation.addedNodes.forEach((node) => {
-        if (node instanceof HTMLImageElement) rewrite(node);
-        if (node instanceof HTMLElement) node.querySelectorAll("img").forEach(rewrite);
-      });
-    }
-  }).observe(document.documentElement, { subtree: true, childList: true, attributes: true, attributeFilter: ["src"] });
+  const src = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, "src")!;
+  Object.defineProperty(HTMLImageElement.prototype, "src", {
+    ...src,
+    set(value: string) {
+      src.set!.call(this, shouldProxy(value) ? viaProxy(value) : value);
+    },
+  });
 }
