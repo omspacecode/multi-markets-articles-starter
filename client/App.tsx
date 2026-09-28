@@ -1,23 +1,23 @@
+import "./lib/verify-proxy"; // TEMPORARY: remove after verification
 import "./global.css";
 
 import { createRoot } from "react-dom/client";
 import { QueryCache, QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { App as AntApp, ConfigProvider } from "antd";
 import enGB from "antd/locale/en_GB";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { GuideProvider } from "@/context/guide-context";
-import { PersonaProvider, usePersona } from "@/context/persona-context";
-import { relayTheme } from "@/lib/theme";
-import ArticlePage from "./pages/ArticlePage";
-import ArticlePreview from "./pages/ArticlePreview";
-import CountryHome from "./pages/CountryHome";
+import { MarketProvider } from "@/context/market-context";
+import { moreTheme } from "@/lib/theme";
+import ArticlePage, { TemplatePreviewPage } from "./pages/ArticlePage";
+import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
   queryCache: new QueryCache({
     onError(error, query) {
-      console.error("[Relay] Query failed", query.queryKey, error);
+      console.error("[More] Query failed", query.queryKey, error);
     },
   }),
   defaultOptions: {
@@ -25,30 +25,24 @@ const queryClient = new QueryClient({
   },
 });
 
-function HomeRedirect() {
-  const { persona } = usePersona();
-  return <Navigate to={`/${persona.countries[0]}`} replace />;
-}
-
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <ConfigProvider theme={relayTheme} locale={enGB}>
+      <ConfigProvider theme={moreTheme} locale={enGB}>
         <AntApp notification={{ placement: "bottomRight" }}>
-          <PersonaProvider>
+          <MarketProvider>
             <GuideProvider>
               <Routes>
                 <Route element={<AppLayout />}>
-                  <Route index element={<HomeRedirect />} />
-                  <Route path="preview/news-article" element={<ArticlePreview />} />
-                  <Route path=":country" element={<CountryHome />} />
-                  <Route path=":country/articles/:articleId" element={<ArticlePage />} />
+                  <Route index element={<Home />} />
+                  <Route path="articles/:slug" element={<ArticlePage />} />
+                  <Route path="preview/article-template" element={<TemplatePreviewPage />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </Route>
               </Routes>
             </GuideProvider>
-          </PersonaProvider>
+          </MarketProvider>
         </AntApp>
       </ConfigProvider>
     </BrowserRouter>

@@ -1,6 +1,6 @@
 import type { ThemeConfig } from "antd";
 
-export const relayTheme: ThemeConfig = {
+export const moreTheme: ThemeConfig = {
   token: {
     colorPrimary: "#0F4C3F",
     colorInfo: "#0F4C3F",

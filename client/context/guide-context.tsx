@@ -1,17 +1,19 @@
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
 
-export type TopicId = "target-groups" | "templates" | "multi-country" | "carousel";
+export type TopicId = "overview" | "markets" | "tabs" | "editing" | "publishing";
+export type MarkerTopic = Exclude<TopicId, "overview">;
 
-export const TOPIC_ORDER: TopicId[] = ["target-groups", "templates", "multi-country", "carousel"];
+export const TOPIC_ORDER: TopicId[] = ["overview", "markets", "tabs", "editing", "publishing"];
 
-export const TOPIC_META: Record<TopicId, { number: number; title: string }> = {
-  "target-groups": { number: 1, title: "Target groups" },
-  templates: { number: 2, title: "Templates & access" },
-  "multi-country": { number: 3, title: "Multi-country" },
-  carousel: { number: 4, title: "Automatic carousel" },
+export const TOPIC_META: Record<TopicId, { number?: number; title: string }> = {
+  overview: { title: "Overview" },
+  markets: { number: 1, title: "Content per market" },
+  tabs: { number: 2, title: "Market tabs" },
+  editing: { number: 3, title: "Editing & preview" },
+  publishing: { number: 4, title: "Approval & publishing" },
 };
 
-const MARKERS_KEY = "relay.markers";
+const MARKERS_KEY = "more.markers";
 
 interface GuideContextValue {
   isOpen: boolean;
@@ -21,19 +23,14 @@ interface GuideContextValue {
   setTopic: (topic: TopicId) => void;
   markersVisible: boolean;
   setMarkersVisible: (visible: boolean) => void;
-  tourOpen: boolean;
-  setTourOpen: (open: boolean) => void;
 }
 
 const GuideContext = createContext<GuideContextValue | null>(null);
 
 export function GuideProvider({ children }: { children: ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [topic, setTopic] = useState<TopicId>("target-groups");
-  const [tourOpen, setTourOpen] = useState(false);
-  const [markersVisible, setMarkersState] = useState(
-    () => window.localStorage.getItem(MARKERS_KEY) !== "off",
-  );
+  const [topic, setTopic] = useState<TopicId>("overview");
+  const [markersVisible, setMarkersState] = useState(() => window.localStorage.getItem(MARKERS_KEY) !== "off");
 
   const openGuide = useCallback((next?: TopicId) => {
     if (next) setTopic(next);
@@ -48,18 +45,8 @@ export function GuideProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value = useMemo(
-    () => ({
-      isOpen,
-      topic,
-      openGuide,
-      closeGuide,
-      setTopic,
-      markersVisible,
-      setMarkersVisible,
-      tourOpen,
-      setTourOpen,
-    }),
-    [isOpen, topic, openGuide, closeGuide, markersVisible, setMarkersVisible, tourOpen],
+    () => ({ isOpen, topic, openGuide, closeGuide, setTopic, markersVisible, setMarkersVisible }),
+    [isOpen, topic, openGuide, closeGuide, markersVisible, setMarkersVisible],
   );
 
   return <GuideContext.Provider value={value}>{children}</GuideContext.Provider>;

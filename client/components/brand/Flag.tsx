@@ -1,8 +1,8 @@
 import type { ReactElement } from "react";
 import { cn } from "@/lib/utils";
-import type { CountryCode } from "@/lib/demo-data";
+import type { MarketCode } from "@/lib/markets";
 
-const FLAGS: Record<CountryCode, ReactElement> = {
+const FLAGS: Record<MarketCode, ReactElement> = {
   dk: (
     <svg viewBox="0 0 37 28" preserveAspectRatio="xMidYMid slice">
       <rect width="37" height="28" fill="#C8102E" />
@@ -10,32 +10,29 @@ const FLAGS: Record<CountryCode, ReactElement> = {
       <rect y="12" width="37" height="4" fill="#fff" />
     </svg>
   ),
-  se: (
-    <svg viewBox="0 0 16 10" preserveAspectRatio="xMidYMid slice">
-      <rect width="16" height="10" fill="#006AA7" />
-      <rect x="5" width="2" height="10" fill="#FECC02" />
-      <rect y="4" width="16" height="2" fill="#FECC02" />
-    </svg>
-  ),
-  no: (
-    <svg viewBox="0 0 22 16" preserveAspectRatio="xMidYMid slice">
-      <rect width="22" height="16" fill="#BA0C2F" />
-      <rect x="6" width="4" height="16" fill="#fff" />
-      <rect y="6" width="22" height="4" fill="#fff" />
-      <rect x="7" width="2" height="16" fill="#00205B" />
-      <rect y="7" width="22" height="2" fill="#00205B" />
-    </svg>
-  ),
   de: (
     <svg viewBox="0 0 5 3" preserveAspectRatio="none">
-      <rect width="5" height="1" y="0" fill="#000" />
+      <rect width="5" height="1" fill="#000" />
       <rect width="5" height="1" y="1" fill="#DD0000" />
       <rect width="5" height="1" y="2" fill="#FFCE00" />
     </svg>
   ),
+  at: (
+    <svg viewBox="0 0 3 3" preserveAspectRatio="none">
+      <rect width="3" height="3" fill="#C8102E" />
+      <rect width="3" height="1" y="1" fill="#fff" />
+    </svg>
+  ),
+  nl: (
+    <svg viewBox="0 0 3 3" preserveAspectRatio="none">
+      <rect width="3" height="1" fill="#AE1C28" />
+      <rect width="3" height="1" y="1" fill="#fff" />
+      <rect width="3" height="1" y="2" fill="#21468B" />
+    </svg>
+  ),
 };
 
-export function Flag({ code, className }: { code: CountryCode; className?: string }) {
+export function Flag({ code, className }: { code: MarketCode; className?: string }) {
   return (
     <span
       className={cn(

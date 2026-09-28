@@ -1,61 +1,18 @@
 import { useEffect, useRef, type ReactNode } from "react";
-import { Button, Drawer, Grid, Steps, Switch, Table, Tooltip } from "antd";
-import {
-  ArrowLeftOutlined,
-  ArrowRightOutlined,
-  CheckCircleFilled,
-  CloseCircleOutlined,
-  ExportOutlined,
-  MinusCircleFilled,
-} from "@ant-design/icons";
+import { Button, Drawer, Grid, Steps, Switch, Table } from "antd";
+import { ArrowLeftOutlined, ArrowRightOutlined, CompassOutlined, ExportOutlined } from "@ant-design/icons";
 import { cn } from "@/lib/utils";
-import { TOPIC_META, TOPIC_ORDER, useGuide } from "@/context/guide-context";
+import { TOPIC_META, TOPIC_ORDER, useGuide, type MarkerTopic } from "@/context/guide-context";
 import { CodeBlock } from "./CodeBlock";
-import { GUIDE_TOPICS, type GuideOption } from "./guide-topics";
-import { TopicLiveStatus } from "./TopicLiveStatus";
-
-type Access = "yes" | "no" | { partial: string };
-
-const ROLE_COLUMNS = ["Article author", "Editor", "Developer", "Admin"];
-const ROLE_NOTES = ["Custom role", "Built-in", "Built-in", "Built-in"];
-
-const ROLE_MATRIX: { capability: string; access: Access[] }[] = [
-  { capability: "Create and edit articles", access: ["yes", "yes", "yes", "yes"] },
-  {
-    capability: "Publish articles",
-    access: [{ partial: "Optional: grant publish, or require approval with a workflow" }, "yes", "yes", "yes"],
-  },
-  { capability: "Edit homepage texts and images", access: ["no", "yes", "yes", "yes"] },
-  {
-    capability: "Add or remove homepage sections",
-    access: ["no", { partial: "Can rearrange, but can't insert sections that require editDesigns" }, "yes", "yes"],
-  },
-  { capability: "Change styles and design", access: ["no", "no", "yes", "yes"] },
-  { capability: "Change models and fields", access: ["no", "no", "yes", "yes"] },
-  { capability: "Manage users and roles", access: ["no", "no", "no", "yes"] },
-];
-
-const FIELD_MAP: [string, string][] = [
-  ["Title", "Headline and carousel slide"],
-  ["Excerpt", "Lead paragraph and slide text"],
-  ["Hero image", "Article hero and slide image"],
-  ["Category", "Category tag"],
-  ["Countries", "Which country homepages show it"],
-  ["Target groups", "Who sees it"],
-  ["Author", "Byline"],
-  ["Body", "Article text (rich text)"],
-  ["Featured", "Pinned to the first slide"],
-];
-
-function AccessIcon({ access }: { access: Access }) {
-  if (access === "yes") return <CheckCircleFilled className="text-lg text-pine-500" aria-label="Allowed" />;
-  if (access === "no") return <CloseCircleOutlined className="text-lg text-ink-300" aria-label="Not allowed" />;
-  return (
-    <Tooltip title={access.partial}>
-      <MinusCircleFilled className="cursor-help text-lg text-[#C58B1A]" aria-label={`Partly: ${access.partial}`} />
-    </Tooltip>
-  );
-}
+import {
+  GUIDE_TOPICS,
+  OPEN_DECISIONS,
+  OVERVIEW_GOAL,
+  REQUIREMENTS,
+  RESOURCES,
+  SUGGESTED_PATH,
+  type GuideOption,
+} from "./guide-topics";
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -63,6 +20,40 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
       <h3 className="mb-4 text-[13px] font-semibold uppercase tracking-[0.14em] text-ink-500">{title}</h3>
       {children}
     </section>
+  );
+}
+
+function LinkList({ links }: { links: { label: string; href: string }[] }) {
+  return (
+    <ul className="flex flex-wrap gap-2">
+      {links.map((link) => (
+        <li key={link.href}>
+          <a
+            href={link.href}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-full border border-border bg-white px-3 py-1.5 text-[13px] text-ink-600 transition hover:border-ink-300 hover:text-ink"
+          >
+            {link.label} <ExportOutlined className="text-[11px]" />
+          </a>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function NumberedList({ items }: { items: ReactNode[] }) {
+  return (
+    <ol className="space-y-3">
+      {items.map((item, i) => (
+        <li key={i} className="flex gap-3 text-[14.5px] leading-relaxed text-ink-700">
+          <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-coral-100 text-[11px] font-semibold text-coral-700">
+            {i + 1}
+          </span>
+          <span>{item}</span>
+        </li>
+      ))}
+    </ol>
   );
 }
 
@@ -74,18 +65,153 @@ const optionColumns = [
     title: "In this demo",
     dataIndex: "inDemo",
     key: "inDemo",
-    render: (v: string) => (
-      <span className={cn(v.startsWith("Used") && "font-medium text-pine-600")}>{v}</span>
-    ),
+    render: (v: string) => <span className={cn(v === "Used" && "font-medium text-pine-600")}>{v}</span>,
   },
 ];
+
+function Overview() {
+  const { setTopic } = useGuide();
+
+  return (
+    <>
+      <p className="eyebrow mt-9 text-coral-600">What Bestseller wants to achieve</p>
+      <p className="mt-3 font-display text-[26px] leading-[1.2] text-ink md:text-[30px]">{OVERVIEW_GOAL}</p>
+
+      <Section title="What we heard → what we recommend">
+        <div className="overflow-x-auto rounded-2xl border border-border bg-white">
+          <table className="w-full min-w-[620px] text-left text-[13px]">
+            <thead>
+              <tr className="bg-sand-100 text-ink-500">
+                <th className="px-4 py-3 font-medium">What we heard</th>
+                <th className="px-4 py-3 font-medium">Recommendation</th>
+                <th className="px-4 py-3 font-medium">In the demo</th>
+              </tr>
+            </thead>
+            <tbody>
+              {REQUIREMENTS.map((row) => (
+                <tr key={row.heard} className="border-t border-sand-200 align-top">
+                  <td className="px-4 py-3 font-medium text-ink">{row.heard}</td>
+                  <td className="px-4 py-3 leading-relaxed text-ink-600">{row.recommendation}</td>
+                  <td className="px-4 py-3 text-ink-600">
+                    {row.inDemo}
+                    {row.topic && (
+                      <button
+                        type="button"
+                        onClick={() => setTopic(row.topic!)}
+                        className="mt-1 block text-[12px] font-medium text-pine-700 hover:underline"
+                      >
+                        {TOPIC_META[row.topic].number}. {TOPIC_META[row.topic].title} →
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Section>
+
+      <Section title="Suggested path: dev first, content second">
+        <Steps
+          orientation="vertical"
+          size="small"
+          items={SUGGESTED_PATH.map((step) => ({
+            title: (
+              <span className="font-medium">
+                {step.title}
+                <span className="ml-2 rounded-full bg-sand-200 px-2 py-0.5 text-[11px] font-medium text-ink-600">
+                  {step.owner}
+                </span>
+              </span>
+            ),
+            content: <span className="text-[13.5px] leading-relaxed text-ink-500">{step.description}</span>,
+            status: "process" as const,
+          }))}
+        />
+      </Section>
+
+      <Section title="Open decisions for the working session">
+        <NumberedList items={OPEN_DECISIONS} />
+      </Section>
+
+      <Section title="Resources">
+        <LinkList links={RESOURCES} />
+      </Section>
+    </>
+  );
+}
+
+function TopicPage({ topic }: { topic: MarkerTopic }) {
+  const data = GUIDE_TOPICS[topic];
+
+  return (
+    <>
+      <p className="eyebrow mt-9 text-coral-600">What we heard</p>
+      <p className="mt-3 font-display text-[24px] leading-[1.25] text-ink md:text-[28px]">{data.heard}</p>
+
+      <div className="mt-8 rounded-2xl border border-pine-100 bg-pine-50 p-5">
+        <p className="eyebrow text-pine-600">Our recommendation</p>
+        <p className="mt-2 text-[15px] leading-relaxed text-ink-700">{data.answer}</p>
+      </div>
+
+      <Section title="Try it in this demo">
+        <NumberedList items={data.tryIt} />
+      </Section>
+
+      <Section title="How to set it up">
+        <Steps
+          orientation="vertical"
+          size="small"
+          items={data.setup.map((step) => ({
+            title: <span className="font-medium">{step.title}</span>,
+            content: <span className="text-[13.5px] leading-relaxed text-ink-500">{step.description}</span>,
+            status: "process" as const,
+          }))}
+        />
+      </Section>
+
+      {data.options && (
+        <Section title="Your options">
+          <Table<GuideOption>
+            rowKey="option"
+            size="middle"
+            pagination={false}
+            columns={optionColumns}
+            dataSource={data.options}
+            scroll={{ x: 620 }}
+            className="overflow-hidden rounded-2xl border border-border"
+          />
+        </Section>
+      )}
+
+      {data.worthKnowing && (
+        <Section title="Worth knowing">
+          <ul className="space-y-3">
+            {data.worthKnowing.map((item, i) => (
+              <li key={i} className="flex gap-3 text-[14px] leading-relaxed text-ink-700">
+                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-coral-500" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </Section>
+      )}
+
+      <Section title="The code in this demo">
+        <CodeBlock code={data.code.code} title={data.code.title} />
+      </Section>
+
+      <Section title="Further reading">
+        <LinkList links={data.links} />
+      </Section>
+    </>
+  );
+}
 
 export function SolutionGuide() {
   const { isOpen, topic, setTopic, closeGuide, markersVisible, setMarkersVisible } = useGuide();
   const screens = Grid.useBreakpoint();
   const topRef = useRef<HTMLDivElement>(null);
-  const data = GUIDE_TOPICS[topic];
-  const meta = TOPIC_META[topic];
   const index = TOPIC_ORDER.indexOf(topic);
 
   useEffect(() => {
@@ -100,7 +226,7 @@ export function SolutionGuide() {
       title={
         <div className="flex flex-col">
           <span className="font-display text-[26px] font-normal leading-tight">Solution guide</span>
-          <span className="text-xs font-normal text-ink-500">Your four questions, answered with a working setup</span>
+          <span className="text-xs font-normal text-ink-500">What we heard on the call, and how this demo answers it</span>
         </div>
       }
       extra={
@@ -111,15 +237,11 @@ export function SolutionGuide() {
       }
       footer={
         <div className="flex items-center justify-between py-1">
-          <Button
-            icon={<ArrowLeftOutlined />}
-            disabled={index === 0}
-            onClick={() => setTopic(TOPIC_ORDER[index - 1])}
-          >
+          <Button icon={<ArrowLeftOutlined />} disabled={index === 0} onClick={() => setTopic(TOPIC_ORDER[index - 1])}>
             Previous
           </Button>
           <span className="text-xs text-ink-500">
-            Question {meta.number} of {TOPIC_ORDER.length}
+            {index + 1} of {TOPIC_ORDER.length}
           </span>
           <Button
             type="primary"
@@ -132,9 +254,10 @@ export function SolutionGuide() {
       }
     >
       <div ref={topRef} className="scroll-mt-6" />
-      <nav className="grid grid-cols-2 gap-2 md:grid-cols-4" aria-label="Questions">
+      <nav className="grid grid-cols-2 gap-2 md:grid-cols-5" aria-label="Guide topics">
         {TOPIC_ORDER.map((id) => {
           const active = id === topic;
+          const { number, title } = TOPIC_META[id];
           return (
             <button
               key={id}
@@ -142,7 +265,7 @@ export function SolutionGuide() {
               onClick={() => setTopic(id)}
               aria-current={active ? "true" : undefined}
               className={cn(
-                "flex items-center gap-2.5 rounded-xl border px-3 py-2.5 text-left text-[13px] font-medium transition",
+                "flex items-center gap-2.5 rounded-xl border px-3 py-2.5 text-left text-[13px] font-medium leading-tight transition",
                 active
                   ? "border-ink bg-ink text-white"
                   : "border-border bg-white text-ink-600 hover:border-ink-300 hover:text-ink",
@@ -154,138 +277,16 @@ export function SolutionGuide() {
                   active ? "bg-coral-500 text-white" : "bg-sand-200 text-ink-600",
                 )}
               >
-                {TOPIC_META[id].number}
+                {number ?? <CompassOutlined />}
               </span>
-              {TOPIC_META[id].title}
+              {title}
             </button>
           );
         })}
       </nav>
 
       <div key={topic} className="animate-fade-up">
-        <p className="eyebrow mt-9 text-coral-600">Question {meta.number} from your team</p>
-        <blockquote className="mt-3 font-display text-[26px] leading-[1.2] text-ink md:text-[30px]">
-          “{data.question}”
-        </blockquote>
-
-        <div className="mt-8 rounded-2xl border border-pine-100 bg-pine-50 p-5">
-          <p className="eyebrow text-pine-600">Our recommendation</p>
-          <p className="mt-2 text-[15px] leading-relaxed text-ink-700">{data.answer}</p>
-        </div>
-
-        <div className="mt-4">
-          <TopicLiveStatus topic={topic} />
-        </div>
-
-        <Section title="Try it in this demo">
-          <ol className="space-y-3">
-            {data.tryIt.map((item, i) => (
-              <li key={i} className="flex gap-3 text-[14.5px] leading-relaxed text-ink-700">
-                <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-coral-100 text-[11px] font-semibold text-coral-700">
-                  {i + 1}
-                </span>
-                <span>{item}</span>
-              </li>
-            ))}
-          </ol>
-        </Section>
-
-        {topic === "templates" && (
-          <>
-            <Section title="The fixed template: field → where it appears">
-              <div className="overflow-hidden rounded-2xl border border-border bg-white">
-                {FIELD_MAP.map(([field, usage]) => (
-                  <div
-                    key={field}
-                    className="flex items-center justify-between gap-4 border-b border-sand-200 px-4 py-2.5 text-sm last:border-b-0"
-                  >
-                    <code className="inline-code">{field}</code>
-                    <span className="text-right text-ink-500">{usage}</span>
-                  </div>
-                ))}
-              </div>
-            </Section>
-            <Section title="Who can do what">
-              <div className="overflow-x-auto rounded-2xl border border-border bg-white">
-                <table className="w-full min-w-[560px] text-sm">
-                  <thead>
-                    <tr className="bg-sand-100 text-left">
-                      <th className="px-4 py-3 font-medium text-ink-500">Capability</th>
-                      {ROLE_COLUMNS.map((role, i) => (
-                        <th key={role} className="px-3 py-3 text-center font-medium text-ink">
-                          {role}
-                          <span className="block text-[11px] font-normal text-ink-400">{ROLE_NOTES[i]}</span>
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {ROLE_MATRIX.map((row) => (
-                      <tr key={row.capability} className="border-t border-sand-200">
-                        <td className="px-4 py-3 text-ink-700">{row.capability}</td>
-                        {row.access.map((access, i) => (
-                          <td key={i} className="px-3 py-3 text-center">
-                            <AccessIcon access={access} />
-                          </td>
-                        ))}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              <p className="mt-3 text-xs text-ink-500">
-                Custom roles are an Enterprise add-on and can be scoped per model and per locale. Built-in roles apply to the whole space.
-              </p>
-            </Section>
-          </>
-        )}
-
-        <Section title="How to set it up">
-          <Steps
-            orientation="vertical"
-            size="small"
-            items={data.setup.map((step) => ({
-              title: <span className="font-medium">{step.title}</span>,
-              content: <span className="text-[13.5px] leading-relaxed text-ink-500">{step.description}</span>,
-              status: "process" as const,
-            }))}
-          />
-        </Section>
-
-        {data.options && (
-          <Section title="Your options">
-            <Table<GuideOption>
-              rowKey="option"
-              size="middle"
-              pagination={false}
-              columns={optionColumns}
-              dataSource={data.options}
-              scroll={{ x: 620 }}
-              className="overflow-hidden rounded-2xl border border-border"
-            />
-          </Section>
-        )}
-
-        <Section title="The code in this demo">
-          <CodeBlock code={data.code.code} title={data.code.title} />
-        </Section>
-
-        <Section title="Further reading">
-          <ul className="flex flex-wrap gap-2">
-            {data.links.map((link) => (
-              <li key={link.href}>
-                <a
-                  href={link.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1.5 rounded-full border border-border bg-white px-3 py-1.5 text-[13px] text-ink-600 transition hover:border-ink-300 hover:text-ink"
-                >
-                  {link.label} <ExportOutlined className="text-[11px]" />
-                </a>
-              </li>
-            ))}
-          </ul>
-        </Section>
+        {topic === "overview" ? <Overview /> : <TopicPage topic={topic} />}
       </div>
     </Drawer>
   );

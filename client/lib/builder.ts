@@ -1,32 +1,35 @@
 export const BUILDER_API_KEY = import.meta.env.VITE_PUBLIC_BUILDER_KEY as string;
 
 export const MODELS = {
-  homepage: "country-homepage",
-  article: "news-article",
-  banner: "audience-banner",
+  article: "bestseller-demo-article",
+  service: "bestseller-demo-service",
+  template: "bestseller-demo-article-template",
 } as const;
 
 export const MODEL_IDS: Record<keyof typeof MODELS, string> = {
-  homepage: "a3e9dc84446f4398a07a74fe099ef9c0",
-  article: "0d9be7f5074b47b1a07f9f4fd8737b86",
-  banner: "4032a423b4204ed88b66a400ed99bae9",
+  article: "9b49e61d4b4c430bb994bbe9c02499be",
+  service: "c480045a247e4bd4818fc1177f16e896",
+  template: "93be88d52e1a4dcaa63e835b896a1afc",
 };
 
-export const builderContentUrl = (contentId: string) =>
-  `https://builder.io/content/${contentId}`;
+// Demo only: skips Builder's CDN cache so a publish shows up on the next poll. Don't ship this (see guide → Approval & publishing).
+export const FRESH = { options: { cachebust: true } };
 
-export const builderModelUrl = (modelId: string) =>
-  `https://builder.io/models/${modelId}`;
+export const builderContentUrl = (contentId: string) => `https://builder.io/content/${contentId}`;
+
+export const builderModelUrl = (modelId: string) => `https://builder.io/models/${modelId}`;
 
 export const BUILDER_DOCS = {
-  targeting: "https://www.builder.io/c/docs/targeting",
-  customTargeting: "https://www.builder.io/c/docs/custom-targeting-attributes",
-  personalization: "https://www.builder.io/c/docs/targeting-cheatsheet",
-  roles: "https://www.builder.io/c/docs/guides/roles-and-permissions",
-  customRoles: "https://www.builder.io/c/docs/custom-roles",
-  componentsOnly: "https://www.builder.io/c/docs/guides/components-only-mode",
-  governance: "https://www.builder.io/c/docs/content-governance",
-  registerComponents: "https://www.builder.io/c/docs/custom-components-setup",
+  models: "https://www.builder.io/c/docs/models-intro",
+  dataModels: "https://www.builder.io/c/docs/models-data",
+  customFields: "https://www.builder.io/c/docs/custom-fields",
+  querying: "https://www.builder.io/c/docs/querying",
   contentApi: "https://www.builder.io/c/docs/content-api",
+  writeApi: "https://www.builder.io/c/docs/write-api",
+  previewDataModels: "https://www.builder.io/c/docs/previewing-data-models",
+  dynamicPreviewUrls: "https://www.builder.io/c/docs/dynamic-preview-urls",
+  registerComponents: "https://www.builder.io/c/docs/custom-components-setup",
+  governance: "https://www.builder.io/c/docs/content-governance",
   webhooks: "https://www.builder.io/c/docs/webhooks",
+  customTargeting: "https://www.builder.io/c/docs/custom-targeting-attributes",
 } as const;
